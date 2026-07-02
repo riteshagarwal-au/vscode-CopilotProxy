@@ -12,6 +12,7 @@
   "engines": {
     "vscode": "^1.95.0"
   },
+  "icon": "images/icon-v4.png",
   "categories": ["AI", "Other"],
   "keywords": ["copilot", "proxy", "anthropic", "openai", "github"],
   "activationEvents": ["onStartupFinished"],
@@ -22,7 +23,7 @@
         {
           "id": "copilotProxy",
           "title": "Copilot Proxy",
-          "icon": "$(server)"
+          "icon": "images/icon-activity-bar.svg"
         }
       ]
     },

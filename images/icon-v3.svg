@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <!-- Deep dark background -->
+    <radialGradient id="bg" cx="40%" cy="35%" r="75%">
+      <stop offset="0%" style="stop-color:#1a0a2e"/>
+      <stop offset="100%" style="stop-color:#060612"/>
+    </radialGradient>
+
+    <!-- Copilot purple → proxy blue gradient -->
+    <linearGradient id="proxyRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8957e5"/>
+      <stop offset="50%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#8957e5"/>
+    </linearGradient>
+
+    <!-- AI teal gradient for neural lines -->
+    <linearGradient id="aiLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#14b8a6;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#14b8a6;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#14b8a6;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="aiLineV" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#14b8a6;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#14b8a6;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#14b8a6;stop-opacity:0"/>
+    </linearGradient>
+
+    <!-- Core copilot glow -->
+    <filter id="copilotGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Soft node glow -->
+    <filter id="nodeGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Ring glow -->
+    <filter id="ringGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="256" height="256" rx="52" ry="52" fill="url(#bg)"/>
+  <rect width="256" height="256" rx="52" ry="52" fill="none" stroke="#8957e5" stroke-width="1.5" opacity="0.2"/>
+
+  <!-- ── AI: Neural scan lines (horizontal + vertical faint grid) ── -->
+  <line x1="30" y1="128" x2="226" y2="128" stroke="url(#aiLine)" stroke-width="1"/>
+  <line x1="128" y1="30" x2="128" y2="226" stroke="url(#aiLineV)" stroke-width="1"/>
+  <line x1="30" y1="88"  x2="226" y2="88"  stroke="url(#aiLine)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="30" y1="168" x2="226" y2="168" stroke="url(#aiLine)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="88"  y1="30" x2="88"  y2="226" stroke="url(#aiLineV)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="168" y1="30" x2="168" y2="226" stroke="url(#aiLineV)" stroke-width="0.5" opacity="0.4"/>
+
+  <!-- ── AI: Corner neural nodes ── -->
+  <circle cx="52"  cy="52"  r="5" fill="#060612" stroke="#14b8a6" stroke-width="1.8" filter="url(#nodeGlow)"/>
+  <circle cx="204" cy="52"  r="5" fill="#060612" stroke="#14b8a6" stroke-width="1.8" filter="url(#nodeGlow)"/>
+  <circle cx="52"  cy="204" r="5" fill="#060612" stroke="#14b8a6" stroke-width="1.8" filter="url(#nodeGlow)"/>
+  <circle cx="204" cy="204" r="5" fill="#060612" stroke="#14b8a6" stroke-width="1.8" filter="url(#nodeGlow)"/>
+
+  <!-- ── AI: Mid-edge nodes ── -->
+  <circle cx="128" cy="38"  r="4" fill="#060612" stroke="#8957e5" stroke-width="1.5" filter="url(#nodeGlow)"/>
+  <circle cx="128" cy="218" r="4" fill="#060612" stroke="#8957e5" stroke-width="1.5" filter="url(#nodeGlow)"/>
+  <circle cx="38"  cy="128" r="4" fill="#060612" stroke="#8957e5" stroke-width="1.5" filter="url(#nodeGlow)"/>
+  <circle cx="218" cy="128" r="4" fill="#060612" stroke="#8957e5" stroke-width="1.5" filter="url(#nodeGlow)"/>
+
+  <!-- ── PROXY: Outer orbit ring (dashed, suggests routing loop) ── -->
+  <circle cx="128" cy="128" r="80" fill="none" stroke="#3b82f6" stroke-width="1.2"
+          stroke-dasharray="6 4" opacity="0.35"/>
+
+  <!-- ── PROXY: Two curved relay arrows around the center ── -->
+  <!-- Top arc: left→right (request) -->
+  <path d="M 62 100 A 72 72 0 0 1 194 100"
+        fill="none" stroke="url(#proxyRing)" stroke-width="7"
+        stroke-linecap="round" filter="url(#ringGlow)"/>
+  <!-- Arrowhead top-right -->
+  <polygon points="194,100  178,88  182,108" fill="#3b82f6" filter="url(#ringGlow)"/>
+
+  <!-- Bottom arc: right→left (response) -->
+  <path d="M 194 156 A 72 72 0 0 1 62 156"
+        fill="none" stroke="url(#proxyRing)" stroke-width="7"
+        stroke-linecap="round" filter="url(#ringGlow)"/>
+  <!-- Arrowhead bottom-left -->
+  <polygon points="62,156  78,144  74,164" fill="#8957e5" filter="url(#ringGlow)"/>
+
+  <!-- ── COPILOT: Center hub ── -->
+  <!-- Outer glow halo -->
+  <circle cx="128" cy="128" r="35" fill="#8957e510" stroke="#8957e5"
+          stroke-width="1.5" opacity="0.5" filter="url(#copilotGlow)"/>
+  <!-- Inner circle -->
+  <circle cx="128" cy="128" r="26" fill="#0f0820" stroke="#8957e5" stroke-width="2"/>
+
+  <!-- Copilot ghost silhouette (simplified round head + dot eyes) -->
+  <!-- Head dome -->
+  <path d="M110 130 A18 18 0 0 1 146 130 L146 142 Q146 150 128 150 Q110 150 110 142 Z"
+        fill="#8957e5" opacity="0.9" filter="url(#copilotGlow)"/>
+  <!-- Ghost wavy bottom -->
+  <path d="M110 142 Q113 148 116 144 Q119 140 122 144 Q125 148 128 144 Q131 140 134 144 Q137 148 140 144 Q143 140 146 142"
+        fill="none" stroke="#8957e5" stroke-width="2" opacity="0.9"/>
+  <!-- Copilot eye dots -->
+  <circle cx="121" cy="136" r="3" fill="white" opacity="0.95"/>
+  <circle cx="135" cy="136" r="3" fill="white" opacity="0.95"/>
+  <!-- AI sparkle above head -->
+  <path d="M128 113 L129.5 120 L136 122 L129.5 124 L128 131 L126.5 124 L120 122 L126.5 120 Z"
+        fill="#14b8a6" filter="url(#copilotGlow)" opacity="0.95"/>
+</svg>

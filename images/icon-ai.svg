@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <!-- Background gradient: deep space dark -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="100%" style="stop-color:#050510"/>
+    </radialGradient>
+
+    <!-- Neon edge glow for nodes -->
+    <filter id="nodeGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Strong center glow -->
+    <filter id="coreGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Line glow -->
+    <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Cyan-to-purple gradient for lines -->
+    <linearGradient id="lineA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:0.8"/>
+    </linearGradient>
+    <linearGradient id="lineB" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a855f7;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#00f0ff;stop-opacity:0.8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="256" height="256" rx="52" ry="52" fill="url(#bgGrad)"/>
+  <!-- Subtle border -->
+  <rect width="256" height="256" rx="52" ry="52" fill="none" stroke="#a855f7" stroke-width="1.5" opacity="0.25"/>
+
+  <!-- ═══ Neural network connections (edges) ═══ -->
+  <!-- Outer ring nodes → center -->
+  <line x1="128" y1="44"  x2="128" y2="128" stroke="url(#lineA)" stroke-width="1.5" filter="url(#lineGlow)"/>
+  <line x1="212" y1="88"  x2="128" y2="128" stroke="url(#lineA)" stroke-width="1.5" filter="url(#lineGlow)"/>
+  <line x1="212" y1="168" x2="128" y2="128" stroke="url(#lineB)" stroke-width="1.5" filter="url(#lineGlow)"/>
+  <line x1="128" y1="212" x2="128" y2="128" stroke="url(#lineB)" stroke-width="1.5" filter="url(#lineGlow)"/>
+  <line x1="44"  y1="168" x2="128" y2="128" stroke="url(#lineB)" stroke-width="1.5" filter="url(#lineGlow)"/>
+  <line x1="44"  y1="88"  x2="128" y2="128" stroke="url(#lineA)" stroke-width="1.5" filter="url(#lineGlow)"/>
+
+  <!-- Mid-ring nodes → center -->
+  <line x1="172" y1="60"  x2="128" y2="128" stroke="#a855f7" stroke-width="1" opacity="0.5" filter="url(#lineGlow)"/>
+  <line x1="84"  y1="60"  x2="128" y2="128" stroke="#00f0ff" stroke-width="1" opacity="0.5" filter="url(#lineGlow)"/>
+  <line x1="196" y1="128" x2="128" y2="128" stroke="#a855f7" stroke-width="1" opacity="0.5" filter="url(#lineGlow)"/>
+  <line x1="60"  y1="128" x2="128" y2="128" stroke="#00f0ff" stroke-width="1" opacity="0.5" filter="url(#lineGlow)"/>
+  <line x1="172" y1="196" x2="128" y2="128" stroke="#a855f7" stroke-width="1" opacity="0.5" filter="url(#lineGlow)"/>
+  <line x1="84"  y1="196" x2="128" y2="128" stroke="#00f0ff" stroke-width="1" opacity="0.5" filter="url(#lineGlow)"/>
+
+  <!-- Cross-connections between outer nodes (ring) -->
+  <line x1="128" y1="44"  x2="212" y2="88"  stroke="#00f0ff" stroke-width="0.8" opacity="0.3"/>
+  <line x1="212" y1="88"  x2="212" y2="168" stroke="#a855f7" stroke-width="0.8" opacity="0.3"/>
+  <line x1="212" y1="168" x2="128" y2="212" stroke="#00f0ff" stroke-width="0.8" opacity="0.3"/>
+  <line x1="128" y1="212" x2="44"  y2="168" stroke="#a855f7" stroke-width="0.8" opacity="0.3"/>
+  <line x1="44"  y1="168" x2="44"  y2="88"  stroke="#00f0ff" stroke-width="0.8" opacity="0.3"/>
+  <line x1="44"  y1="88"  x2="128" y2="44"  stroke="#a855f7" stroke-width="0.8" opacity="0.3"/>
+
+  <!-- ═══ Outer ring nodes ═══ -->
+  <circle cx="128" cy="44"  r="7" fill="#050510" stroke="#00f0ff" stroke-width="2" filter="url(#nodeGlow)"/>
+  <circle cx="212" cy="88"  r="7" fill="#050510" stroke="#a855f7" stroke-width="2" filter="url(#nodeGlow)"/>
+  <circle cx="212" cy="168" r="7" fill="#050510" stroke="#00f0ff" stroke-width="2" filter="url(#nodeGlow)"/>
+  <circle cx="128" cy="212" r="7" fill="#050510" stroke="#a855f7" stroke-width="2" filter="url(#nodeGlow)"/>
+  <circle cx="44"  cy="168" r="7" fill="#050510" stroke="#00f0ff" stroke-width="2" filter="url(#nodeGlow)"/>
+  <circle cx="44"  cy="88"  r="7" fill="#050510" stroke="#a855f7" stroke-width="2" filter="url(#nodeGlow)"/>
+
+  <!-- Mid-ring nodes -->
+  <circle cx="172" cy="60"  r="5" fill="#050510" stroke="#a855f7" stroke-width="1.5" filter="url(#nodeGlow)" opacity="0.85"/>
+  <circle cx="84"  cy="60"  r="5" fill="#050510" stroke="#00f0ff" stroke-width="1.5" filter="url(#nodeGlow)" opacity="0.85"/>
+  <circle cx="196" cy="128" r="5" fill="#050510" stroke="#a855f7" stroke-width="1.5" filter="url(#nodeGlow)" opacity="0.85"/>
+  <circle cx="60"  cy="128" r="5" fill="#050510" stroke="#00f0ff" stroke-width="1.5" filter="url(#nodeGlow)" opacity="0.85"/>
+  <circle cx="172" cy="196" r="5" fill="#050510" stroke="#a855f7" stroke-width="1.5" filter="url(#nodeGlow)" opacity="0.85"/>
+  <circle cx="84"  cy="196" r="5" fill="#050510" stroke="#00f0ff" stroke-width="1.5" filter="url(#nodeGlow)" opacity="0.85"/>
+
+  <!-- ═══ Core glow pulse ring ═══ -->
+  <circle cx="128" cy="128" r="30" fill="none" stroke="#a855f7" stroke-width="1" opacity="0.4" filter="url(#coreGlow)"/>
+  <circle cx="128" cy="128" r="20" fill="none" stroke="#00f0ff" stroke-width="1" opacity="0.5" filter="url(#coreGlow)"/>
+
+  <!-- ═══ Central AI core node ═══ -->
+  <circle cx="128" cy="128" r="18" fill="#0f0c29" stroke="#00f0ff" stroke-width="2.5" filter="url(#coreGlow)"/>
+
+  <!-- 4-point sparkle star (AI brain center) -->
+  <path d="M128 112 L131 124 L143 128 L131 132 L128 144 L125 132 L113 128 L125 124 Z"
+        fill="#00f0ff" filter="url(#coreGlow)" opacity="0.95"/>
+
+  <!-- Inner bright dot -->
+  <circle cx="128" cy="128" r="4" fill="white" opacity="0.9" filter="url(#coreGlow)"/>
+</svg>

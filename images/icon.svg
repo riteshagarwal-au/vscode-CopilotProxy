@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117"/>
+      <stop offset="100%" style="stop-color:#161b22"/>
+    </linearGradient>
+    <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="arcGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="256" height="256" rx="48" ry="48" fill="url(#bg)"/>
+
+  <!-- Subtle inner glow ring -->
+  <rect width="256" height="256" rx="48" ry="48" fill="none" stroke="#7c3aed" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Top arc arrow (request: left → right, top) -->
+  <path d="M 68 128 A 60 60 0 0 1 188 128" fill="none" stroke="url(#arcGrad)" stroke-width="10" stroke-linecap="round" filter="url(#glow)"/>
+  <!-- Arrowhead top-right -->
+  <polygon points="188,128 172,116 178,134" fill="#3b82f6" filter="url(#glow)"/>
+
+  <!-- Bottom arc arrow (response: right → left, bottom) -->
+  <path d="M 188 128 A 60 60 0 0 1 68 128" fill="none" stroke="url(#arcGrad2)" stroke-width="10" stroke-linecap="round" filter="url(#glow)"/>
+  <!-- Arrowhead bottom-left -->
+  <polygon points="68,128 84,116 78,134" fill="#7c3aed" filter="url(#glow)"/>
+
+  <!-- Central hub circle -->
+  <circle cx="128" cy="128" r="22" fill="#0d1117" stroke="url(#arcGrad)" stroke-width="2.5"/>
+
+  <!-- Copilot-style sparkle star in center -->
+  <!-- 4-point star / cross sparkle -->
+  <path d="M128 108 L131 122 L145 128 L131 134 L128 148 L125 134 L111 128 L125 122 Z"
+        fill="url(#arcGrad)" filter="url(#softglow)" opacity="0.95"/>
+
+  <!-- Small dot accents -->
+  <circle cx="128" cy="64" r="5" fill="#7c3aed" opacity="0.6"/>
+  <circle cx="128" cy="192" r="5" fill="#3b82f6" opacity="0.6"/>
+</svg>
