@@ -1,5 +1,7 @@
 # vscode-CopilotProxy
 
+> Made by **[Ritesh Agarwal](https://buymeacoffee.com/riteshagarwal)** — [☕ Buy me a coffee](https://buymeacoffee.com/riteshagarwal)
+
 A VS Code extension that runs an embedded HTTP proxy on port **4242**, intercepting all GitHub Copilot traffic through `github.copilot.advanced.debug.overrideProxyUrl`. No OAuth device flow — it reuses VS Code's built-in GitHub authentication session.
 
 ## Features
@@ -22,7 +24,6 @@ A VS Code extension that runs an embedded HTTP proxy on port **4242**, intercept
 ## Author
 
 **Ritesh Agarwal** — [☕ Buy me a coffee](https://buymeacoffee.com/riteshagarwal)
-- Signed into GitHub in VS Code (`GitHub` authentication provider)
 
 ## Quick Start
 
