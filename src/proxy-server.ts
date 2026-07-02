@@ -826,9 +826,11 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
   <div><h1>&#128737; Copilot Proxy</h1><p class="sub" id="sub">Loading...</p></div>
   <div style="display:flex;gap:9px;align-items:center">
     <span class="ts" id="ts"></span>
+    <a href="/compilation" class="btn" style="text-decoration:none">&#128269; Message Inspector</a>
     <button class="btn" onclick="load()">&#8635; Refresh</button>
   </div>
 </div>
+<div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">by <span style="color:var(--blue)">Ritesh Agarwal</span> &nbsp;&middot;&nbsp; <a href="https://github.com/riteshagarwal-au/vscode-CopilotProxy" style="color:var(--muted)" target="_blank">GitHub</a></div>
 
 <div class="sec-title">GitHub Copilot Quotas</div>
 <div class="qgrid" id="qgrid"><div class="qcard"><span class="muted">Loading...</span></div></div>
@@ -1104,8 +1106,11 @@ const COMPILATION_HTML = `<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h1>\uD83D\uDD0D Message Inspector</h1>
-<p class="subtitle">Left: input sent to LLM &nbsp;&middot;&nbsp; Right: response received</p>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+  <h1>\uD83D\uDD0D Message Inspector</h1>
+  <a href="/dashboard" class="btn" style="text-decoration:none;font-size:.78rem">&#128737; Dashboard</a>
+</div>
+<p class="subtitle">Left: input sent to LLM &nbsp;&middot;&nbsp; Right: response received &nbsp;&middot;&nbsp; <span style="color:#64748b">by Ritesh Agarwal</span></p>
 <div class="toolbar">
   <button class="btn" onclick="load()">\u21BB Refresh</button>
   <input class="search-box" id="search" placeholder="Filter by model or text\u2026" oninput="renderList()">

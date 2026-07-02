@@ -70,6 +70,7 @@ export class StatusViewProvider implements vscode.TreeDataProvider<StatusItem> {
       new StatusItem('Mode', active ? 'Active' : 'Disabled', active ? 'check' : 'x'),
       new StatusItem('Open Dashboard', `localhost:${this.port}/dashboard`, 'browser', openDashboard),
       new StatusItem('Open Compilation Viewer', `localhost:${this.port}/compilation`, 'list-tree', openCompilation),
+      new StatusItem('Author', 'Ritesh Agarwal', 'person'),
     ];
   }
 }
