@@ -18,6 +18,10 @@ A VS Code extension that runs an embedded HTTP proxy on port **4242**, intercept
 
 - VS Code 1.95+
 - GitHub Copilot subscription
+
+## Author
+
+**Ritesh Agarwal** — [☕ Buy me a coffee](https://buymeacoffee.com/riteshagarwal)
 - Signed into GitHub in VS Code (`GitHub` authentication provider)
 
 ## Quick Start
