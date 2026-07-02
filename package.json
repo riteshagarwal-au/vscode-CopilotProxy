@@ -1,5 +1,5 @@
 {
-  "name": "vscode-copilot-proxy",
+  "name": "copilot-proxy",
   "displayName": "Copilot Proxy",
   "description": "Embedded GitHub Copilot reverse proxy — OpenAI & Anthropic compatible, zero Docker, uses your VS Code GitHub session.",
   "version": "0.1.0",
