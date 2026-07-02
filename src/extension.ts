@@ -196,7 +196,7 @@ async function startProxy(context: vscode.ExtensionContext, port: number): Promi
         proxyServer = null;
         _isAttached = true;
         await setCopilotProxyUrl(`http://127.0.0.1:${port}`);
-        vscode.window.showInformationMessage(`Copilot Proxy: attached to existing proxy on port ${port}.`);
+        outputChannel.appendLine(`[cp] Attached to existing proxy on port ${port}.`);
         return;
       }
       proxyServer = null;
@@ -207,7 +207,7 @@ async function startProxy(context: vscode.ExtensionContext, port: number): Promi
   }
 
   await setCopilotProxyUrl(`http://127.0.0.1:${port}`);
-  vscode.window.showInformationMessage(`Copilot Proxy: active on port ${port} — all Copilot traffic is proxied.`);
+  outputChannel.appendLine(`[cp] Active on port ${port} — all Copilot traffic is proxied.`);
   syncChatLanguageModels(outputChannel);
 }
 

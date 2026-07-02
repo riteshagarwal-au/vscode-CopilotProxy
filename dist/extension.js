@@ -919,7 +919,7 @@ var DASHBOARD_HTML = `<!DOCTYPE html>
     <button class="btn" onclick="load()">&#8635; Refresh</button>
   </div>
 </div>
-<div style="font-size:.11rem;color:var(--muted);margin-bottom:24px">Author: <span style="color:var(--blue)">Ritesh Agarwal</span> &nbsp;&middot;&nbsp; <a href="https://buymeacoffee.com/riteshagarwal" style="color:#FFDD00;background:#000;padding:2px 16px;border-radius:4px;text-decoration:none;font-weight:600" target="_blank">&#9749; Buy me a coffee</a></div>
+<div style="font-size:1rem;color:var(--muted);margin-bottom:24px">Author: <span style="color:var(--blue)">Ritesh Agarwal</span> &nbsp;&middot;&nbsp; <a href="https://buymeacoffee.com/riteshagarwal" style="color:#FFDD00;background:#000;padding:2px 16px;border-radius:4px;text-decoration:none;font-weight:600" target="_blank">&#9749; Buy me a coffee</a></div>
 
 <div class="sec-title">GitHub Copilot Quotas</div>
 <div class="qgrid" id="qgrid"><div class="qcard"><span class="muted">Loading...</span></div></div>
@@ -1601,7 +1601,7 @@ async function startProxy(context, port) {
         proxyServer = null;
         _isAttached = true;
         await setCopilotProxyUrl(`http://127.0.0.1:${port}`);
-        vscode5.window.showInformationMessage(`Copilot Proxy: attached to existing proxy on port ${port}.`);
+        outputChannel.appendLine(`[cp] Attached to existing proxy on port ${port}.`);
         return;
       }
       proxyServer = null;
@@ -1611,7 +1611,7 @@ async function startProxy(context, port) {
     throw err;
   }
   await setCopilotProxyUrl(`http://127.0.0.1:${port}`);
-  vscode5.window.showInformationMessage(`Copilot Proxy: active on port ${port} \u2014 all Copilot traffic is proxied.`);
+  outputChannel.appendLine(`[cp] Active on port ${port} \u2014 all Copilot traffic is proxied.`);
   syncChatLanguageModels(outputChannel);
 }
 async function probeExistingProxy(port) {
