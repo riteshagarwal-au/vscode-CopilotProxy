@@ -830,7 +830,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
     <button class="btn" onclick="load()">&#8635; Refresh</button>
   </div>
 </div>
-<div style="font-size:.7rem;color:var(--muted);margin-bottom:24px">Author: <span style="color:var(--blue)">Ritesh Agarwal</span> &nbsp;&middot;&nbsp; <a href="https://buymeacoffee.com/riteshagarwal" style="color:#FFDD00;background:#000;padding:2px 8px;border-radius:4px;text-decoration:none;font-weight:600" target="_blank">&#9749; Buy me a coffee</a></div>
+<div style="font-size:.7rem;color:var(--muted);margin-bottom:24px">Author: <span style="color:var(--blue)">Ritesh Agarwal</span> &nbsp;&middot;&nbsp; <a href="https://buymeacoffee.com/riteshagarwal" style="color:#FFDD00;background:#000;padding:2px 16px;border-radius:4px;text-decoration:none;font-weight:600" target="_blank">&#9749; Buy me a coffee</a></div>
 
 <div class="sec-title">GitHub Copilot Quotas</div>
 <div class="qgrid" id="qgrid"><div class="qcard"><span class="muted">Loading...</span></div></div>
