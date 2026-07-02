@@ -4,18 +4,6 @@
       <stop offset="0%" style="stop-color:#1b1040"/>
       <stop offset="100%" style="stop-color:#07050f"/>
     </radialGradient>
-    <linearGradient id="orb1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#8957e5;stop-opacity:0.9"/>
-      <stop offset="100%" style="stop-color:#8957e5;stop-opacity:0.1"/>
-    </linearGradient>
-    <linearGradient id="orb2" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.9"/>
-      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.1"/>
-    </linearGradient>
-    <linearGradient id="orb3" x1="50%" y1="0%" x2="50%" y2="100%">
-      <stop offset="0%" style="stop-color:#14b8a6;stop-opacity:0.9"/>
-      <stop offset="100%" style="stop-color:#14b8a6;stop-opacity:0.1"/>
-    </linearGradient>
     <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
       <stop offset="0%" style="stop-color:#ffffff"/>
       <stop offset="40%" style="stop-color:#c084fc"/>
@@ -30,39 +18,43 @@
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
     <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>
 
+  <!-- Background -->
   <rect width="256" height="256" rx="54" ry="54" fill="url(#bg)"/>
   <rect width="256" height="256" rx="54" ry="54" fill="none" stroke="#8957e5" stroke-width="1.5" opacity="0.3"/>
 
-  <!-- Orbit 1: Purple — Copilot -->
+  <!-- Orbit 1: Purple — Copilot (tilted -30°) -->
   <g transform="rotate(-30, 128, 128)">
-    <ellipse cx="128" cy="128" rx="88" ry="28" fill="none" stroke="#8957e5" stroke-width="2.5" opacity="0.8" filter="url(#softGlow)"/>
-    <circle cx="216" cy="128" r="6" fill="#8957e5" filter="url(#glow)"/>
-    <circle cx="40"  cy="128" r="4" fill="#8957e5" opacity="0.4"/>
+    <ellipse cx="128" cy="128" rx="88" ry="28" fill="none" stroke="#8957e5" stroke-width="3" filter="url(#softGlow)"/>
+    <circle cx="216" cy="128" r="7" fill="#8957e5" filter="url(#glow)"/>
+    <circle cx="40"  cy="128" r="5" fill="#8957e5" opacity="0.5" filter="url(#softGlow)"/>
   </g>
 
-  <!-- Orbit 2: Blue — Proxy -->
+  <!-- Orbit 2: Blue — Proxy (tilted 90°) -->
   <g transform="rotate(90, 128, 128)">
-    <ellipse cx="128" cy="128" rx="88" ry="28" fill="none" stroke="#3b82f6" stroke-width="2.5" opacity="0.8" filter="url(#softGlow)"/>
-    <circle cx="216" cy="128" r="6" fill="#3b82f6" filter="url(#glow)"/>
-    <circle cx="40"  cy="128" r="4" fill="#3b82f6" opacity="0.4"/>
+    <ellipse cx="128" cy="128" rx="88" ry="28" fill="none" stroke="#3b82f6" stroke-width="3" filter="url(#softGlow)"/>
+    <circle cx="216" cy="128" r="7" fill="#3b82f6" filter="url(#glow)"/>
+    <circle cx="40"  cy="128" r="5" fill="#3b82f6" opacity="0.5" filter="url(#softGlow)"/>
   </g>
 
-  <!-- Orbit 3: Teal — AI -->
+  <!-- Orbit 3: Teal — AI (tilted 150°) -->
   <g transform="rotate(150, 128, 128)">
-    <ellipse cx="128" cy="128" rx="88" ry="28" fill="none" stroke="#14b8a6" stroke-width="2.5" opacity="0.8" filter="url(#softGlow)"/>
-    <circle cx="216" cy="128" r="6" fill="#14b8a6" filter="url(#glow)"/>
-    <circle cx="40"  cy="128" r="4" fill="#14b8a6" opacity="0.4"/>
+    <ellipse cx="128" cy="128" rx="88" ry="28" fill="none" stroke="#14b8a6" stroke-width="3" filter="url(#softGlow)"/>
+    <circle cx="216" cy="128" r="7" fill="#14b8a6" filter="url(#glow)"/>
+    <circle cx="40"  cy="128" r="5" fill="#14b8a6" opacity="0.5" filter="url(#softGlow)"/>
   </g>
 
-  <!-- Nucleus -->
-  <circle cx="128" cy="128" r="26" fill="#7c3aed" opacity="0.12" filter="url(#bigGlow)"/>
-  <circle cx="128" cy="128" r="18" fill="#1b1040" stroke="#c084fc" stroke-width="2.5" filter="url(#glow)"/>
+  <!-- Nucleus halo -->
+  <circle cx="128" cy="128" r="28" fill="#7c3aed" opacity="0.15" filter="url(#bigGlow)"/>
+  <!-- Nucleus ring -->
+  <circle cx="128" cy="128" r="19" fill="#1b1040" stroke="#c084fc" stroke-width="2.5" filter="url(#glow)"/>
+  <!-- 4-point star -->
   <path d="M128 112 L130.5 123.5 L142 128 L130.5 132.5 L128 144 L125.5 132.5 L114 128 L125.5 123.5 Z"
         fill="url(#coreGrad)" filter="url(#bigGlow)"/>
+  <!-- Bright center dot -->
   <circle cx="128" cy="128" r="3.5" fill="white" opacity="0.95"/>
 </svg>
