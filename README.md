@@ -1,4 +1,4 @@
-# vscode-CopilotProxy
+# GitHub Copilot Proxy
 
 > Made by **[Ritesh Agarwal](https://buymeacoffee.com/riteshagarwal)** — [☕ Buy me a coffee](https://buymeacoffee.com/riteshagarwal)
 
