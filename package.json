@@ -1,0 +1,128 @@
+{
+  "name": "vscode-copilot-proxy",
+  "displayName": "Copilot Proxy",
+  "description": "Embedded GitHub Copilot reverse proxy — OpenAI & Anthropic compatible, zero Docker, uses your VS Code GitHub session.",
+  "version": "0.1.0",
+  "publisher": "riteshagarwal",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": ["AI", "Other"],
+  "keywords": ["copilot", "proxy", "anthropic", "openai", "github"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "copilotProxy",
+          "title": "Copilot Proxy",
+          "icon": "$(server)"
+        }
+      ]
+    },
+    "views": {
+      "copilotProxy": [
+        {
+          "id": "copilotProxy.statusView",
+          "name": "Status"
+        },
+        {
+          "id": "copilotProxy.metricsView",
+          "name": "Metrics"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Copilot Proxy",
+      "properties": {
+        "copilotProxy.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the Copilot Proxy."
+        },
+        "copilotProxy.proxyPort": {
+          "type": "number",
+          "default": 4242,
+          "description": "Local port for the embedded proxy server."
+        },
+        "copilotProxy.accountType": {
+          "type": "string",
+          "enum": ["individual", "business", "enterprise"],
+          "default": "individual",
+          "description": "GitHub Copilot account type (determines API base URL)."
+        },
+        "copilotProxy.rateLimitSeconds": {
+          "type": "number",
+          "default": 0,
+          "description": "Minimum seconds between LLM requests (0 = disabled)."
+        },
+        "copilotProxy.rateLimitWait": {
+          "type": "boolean",
+          "default": false,
+          "description": "When rate limited: wait (true) or reject with 429 (false)."
+        },
+        "copilotProxy.logRequests": {
+          "type": "boolean",
+          "default": false,
+          "description": "Log request/response bodies to the output channel."
+        },
+        "copilotProxy.showToken": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow /token endpoint to return the Copilot JWT (debug only)."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "copilotProxy.toggle",
+        "title": "Copilot Proxy: Toggle On/Off"
+      },
+      {
+        "command": "copilotProxy.showStatus",
+        "title": "Copilot Proxy: Show Status"
+      },
+      {
+        "command": "copilotProxy.openDashboard",
+        "title": "Copilot Proxy: Open Dashboard"
+      },
+      {
+        "command": "copilotProxy.openCompilation",
+        "title": "Copilot Proxy: Open Compilation Viewer"
+      },
+      {
+        "command": "copilotProxy.refreshToken",
+        "title": "Copilot Proxy: Refresh Token"
+      },
+      {
+        "command": "copilotProxy.changePort",
+        "title": "Copilot Proxy: Change Port"
+      },
+      {
+        "command": "copilotProxy.changeAccountType",
+        "title": "Copilot Proxy: Change Account Type"
+      },
+      {
+        "command": "copilotProxy.resetMetrics",
+        "title": "Copilot Proxy: Reset Metrics"
+      },
+      {
+        "command": "copilotProxy.restartProxy",
+        "title": "Copilot Proxy: Restart Proxy"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "npx vsce package --no-git-tag-version"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "esbuild": "^0.20.0",
+    "@vscode/vsce": "^3.0.0"
+  }
+}
