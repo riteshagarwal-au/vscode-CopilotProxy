@@ -23,38 +23,34 @@
     </filter>
   </defs>
 
-  <!-- Background -->
   <rect width="256" height="256" rx="54" ry="54" fill="url(#bg)"/>
   <rect width="256" height="256" rx="54" ry="54" fill="none" stroke="#8957e5" stroke-width="1.5" opacity="0.3"/>
 
-  <!-- Orbit 1: Purple — Copilot (tilted -30°) -->
-  <g transform="rotate(-30, 128, 128)">
-    <ellipse cx="128" cy="128" rx="88" ry="28" fill="none" stroke="#8957e5" stroke-width="3" filter="url(#softGlow)"/>
-    <circle cx="216" cy="128" r="7" fill="#8957e5" filter="url(#glow)"/>
-    <circle cx="40"  cy="128" r="5" fill="#8957e5" opacity="0.5" filter="url(#softGlow)"/>
+  <!-- Orbit 1: Purple — Copilot (0°, flat horizontal) -->
+  <g transform="rotate(0, 128, 128)">
+    <ellipse cx="128" cy="128" rx="92" ry="26" fill="none" stroke="#8957e5" stroke-width="3" filter="url(#softGlow)"/>
+    <circle cx="220" cy="128" r="7" fill="#8957e5" filter="url(#glow)"/>
+    <circle cx="36"  cy="128" r="5" fill="#8957e5" opacity="0.6"/>
   </g>
 
-  <!-- Orbit 2: Blue — Proxy (tilted 90°) -->
-  <g transform="rotate(90, 128, 128)">
-    <ellipse cx="128" cy="128" rx="88" ry="28" fill="none" stroke="#3b82f6" stroke-width="3" filter="url(#softGlow)"/>
-    <circle cx="216" cy="128" r="7" fill="#3b82f6" filter="url(#glow)"/>
-    <circle cx="40"  cy="128" r="5" fill="#3b82f6" opacity="0.5" filter="url(#softGlow)"/>
+  <!-- Orbit 2: Blue — Proxy (60° tilt) -->
+  <g transform="rotate(60, 128, 128)">
+    <ellipse cx="128" cy="128" rx="92" ry="26" fill="none" stroke="#3b82f6" stroke-width="3" filter="url(#softGlow)"/>
+    <circle cx="220" cy="128" r="7" fill="#3b82f6" filter="url(#glow)"/>
+    <circle cx="36"  cy="128" r="5" fill="#3b82f6" opacity="0.6"/>
   </g>
 
-  <!-- Orbit 3: Teal — AI (tilted 150°) -->
-  <g transform="rotate(150, 128, 128)">
-    <ellipse cx="128" cy="128" rx="88" ry="28" fill="none" stroke="#14b8a6" stroke-width="3" filter="url(#softGlow)"/>
-    <circle cx="216" cy="128" r="7" fill="#14b8a6" filter="url(#glow)"/>
-    <circle cx="40"  cy="128" r="5" fill="#14b8a6" opacity="0.5" filter="url(#softGlow)"/>
+  <!-- Orbit 3: Teal — AI (120° tilt) -->
+  <g transform="rotate(120, 128, 128)">
+    <ellipse cx="128" cy="128" rx="92" ry="26" fill="none" stroke="#14b8a6" stroke-width="3" filter="url(#softGlow)"/>
+    <circle cx="220" cy="128" r="7" fill="#14b8a6" filter="url(#glow)"/>
+    <circle cx="36"  cy="128" r="5" fill="#14b8a6" opacity="0.6"/>
   </g>
 
-  <!-- Nucleus halo -->
+  <!-- Nucleus -->
   <circle cx="128" cy="128" r="28" fill="#7c3aed" opacity="0.15" filter="url(#bigGlow)"/>
-  <!-- Nucleus ring -->
   <circle cx="128" cy="128" r="19" fill="#1b1040" stroke="#c084fc" stroke-width="2.5" filter="url(#glow)"/>
-  <!-- 4-point star -->
   <path d="M128 112 L130.5 123.5 L142 128 L130.5 132.5 L128 144 L125.5 132.5 L114 128 L125.5 123.5 Z"
         fill="url(#coreGrad)" filter="url(#bigGlow)"/>
-  <!-- Bright center dot -->
   <circle cx="128" cy="128" r="3.5" fill="white" opacity="0.95"/>
 </svg>

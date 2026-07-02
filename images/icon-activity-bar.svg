@@ -1,16 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-  <!-- Orbit 1 (tilted -30°) -->
-  <g transform="rotate(-30, 8, 8)">
+  <g transform="rotate(0, 8, 8)">
     <ellipse cx="8" cy="8" rx="6.5" ry="2" fill="none" stroke="currentColor" stroke-width="1.1"/>
   </g>
-  <!-- Orbit 2 (tilted 90°) -->
-  <g transform="rotate(90, 8, 8)">
+  <g transform="rotate(60, 8, 8)">
     <ellipse cx="8" cy="8" rx="6.5" ry="2" fill="none" stroke="currentColor" stroke-width="1.1"/>
   </g>
-  <!-- Orbit 3 (tilted 150°) -->
-  <g transform="rotate(150, 8, 8)">
+  <g transform="rotate(120, 8, 8)">
     <ellipse cx="8" cy="8" rx="6.5" ry="2" fill="none" stroke="currentColor" stroke-width="1.1"/>
   </g>
-  <!-- Center nucleus dot -->
   <circle cx="8" cy="8" r="1.8" fill="currentColor"/>
 </svg>
