@@ -948,12 +948,24 @@ var DASHBOARD_HTML = `<!DOCTYPE html>
 </div>
 
 <div class="sec">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
     <span class="sec-title" style="margin-bottom:0">Available Models</span>
+    <span class="ts" id="models-ts"></span>
   </div>
+  <div id="models-filters" class="brow" style="flex-wrap:wrap;gap:4px;margin-bottom:10px"></div>
   <table>
-    <thead><tr><th>Model ID</th><th>Family</th><th>Context</th><th>Max Output</th><th>Vision</th><th>Tools</th></tr></thead>
-    <tbody id="models-body"><tr><td colspan="6" class="muted" style="text-align:center;padding:16px">Loading...</td></tr></tbody>
+    <thead id="models-thead"><tr>
+      <th onclick="sortBy(0)" style="cursor:pointer">Model ID &#8597;</th>
+      <th onclick="sortBy(1)" style="cursor:pointer">Tier &#8597;</th>
+      <th onclick="sortBy(2)" style="cursor:pointer">Family &#8597;</th>
+      <th onclick="sortBy(3)" style="cursor:pointer">Context &#8597;</th>
+      <th onclick="sortBy(4)" style="cursor:pointer">Max Output &#8597;</th>
+      <th onclick="sortBy(5)" style="cursor:pointer">Vision &#8597;</th>
+      <th onclick="sortBy(6)" style="cursor:pointer">Tools &#8597;</th>
+      <th onclick="sortBy(7)" style="cursor:pointer">Thinking &#8597;</th>
+      <th onclick="sortBy(8)" style="cursor:pointer">Used &#8597;</th>
+    </tr></thead>
+    <tbody id="models-body"><tr><td colspan="9" class="muted" style="text-align:center;padding:16px">Loading...</td></tr></tbody>
   </table>
 </div>
 
@@ -968,6 +980,7 @@ const f=n=>n==null?'&mdash;':Number(n).toLocaleString();
 const ms=n=>n==null?'&mdash;':Math.round(n)+'ms';
 const secs=s=>s<60?Math.round(s)+'s':s<3600?Math.floor(s/60)+'m '+Math.round(s%60)+'s':Math.floor(s/3600)+'h '+Math.floor((s%3600)/60)+'m';
 function fdt(ts){if(!ts)return'&mdash;';const d=new Date(ts*1000);return d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});}
+function fdate(s){return s?new Date(s).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'&mdash;';}
 function qc(p){return p===null?'#58a6ff':p>40?'#3fb950':p>15?'#d29922':'#f85149';}
 
 async function load(){
@@ -1018,20 +1031,108 @@ function renderSess(s){
 }
 function renderAcct(u){
   if(!u||u.error){document.getElementById('acct').innerHTML='<p class="muted" style="font-size:.8rem">Could not load account info.</p>';document.getElementById('feats').innerHTML='';return;}
-  document.getElementById('acct').innerHTML=[['Login','<span class="green">'+(u.login||'&mdash;')+'</span>'],['Plan',u.copilot_plan?'<span class="badge bp">'+u.copilot_plan+'</span>':'&mdash;'],['SKU','<code style="font-size:.72rem">'+(u.access_type_sku||'&mdash;')+'</code>'],['Token Billing',u.token_based_billing?'<span class="badge bg">enabled</span>':'<span class="badge bm">disabled</span>']].map(([k,v])=>'<div class="irow"><span class="ikey">'+k+'</span><span class="ival">'+v+'</span></div>').join('');
-  const FLAGS=[['chat_enabled','Chat'],['cli_enabled','CLI'],['is_mcp_enabled','MCP'],['code_review_enabled','Code Review']];
+  document.getElementById('acct').innerHTML=[['Login','<span class="green">'+(u.login||'&mdash;')+'</span>'],['Plan',u.copilot_plan?'<span class="badge bp">'+u.copilot_plan+'</span>':'&mdash;'],['SKU','<code style="font-size:.72rem">'+(u.access_type_sku||'&mdash;')+'</code>'],['Organisation',(u.organization_login_list||[]).join(', ')||'&mdash;'],['Assigned',fdate(u.assigned_date)],['Quota Resets',fdate(u.quota_reset_date_utc||u.quota_reset_date)],['Token Billing',u.token_based_billing?'<span class="badge bg">enabled</span>':'<span class="badge bm">disabled</span>'],['Overage (premium)',(u.quota_snapshots&&u.quota_snapshots.premium_interactions&&u.quota_snapshots.premium_interactions.overage_permitted)?'<span class="badge bg">allowed</span>':'<span class="badge bm">not allowed</span>']].map(([k,v])=>'<div class="irow"><span class="ikey">'+k+'</span><span class="ival">'+v+'</span></div>').join('');
+  const FLAGS=[['chat_enabled','Chat'],['cli_enabled','CLI'],['editor_preview_features_enabled','Editor Preview'],['is_mcp_enabled','MCP'],['code_review_enabled','Code Review'],['copilotignore_enabled','Copilot Ignore'],['restricted_telemetry','Restricted Telemetry'],['cli_remote_control_enabled','CLI Remote Control'],['cloud_session_storage_enabled','Cloud Session Storage'],['can_upgrade_plan','Can Upgrade']];
   const b=FLAGS.map(([k,l])=>k in u?'<span class="badge '+(u[k]===true?'bg':'bm')+'">'+l+'</span>':'').filter(Boolean).join('');
   document.getElementById('feats').innerHTML=b?'<div class="fgrid">'+b+'</div>':'<p class="muted" style="font-size:.8rem">No data.</p>';
 }
-function renderModels(mdls,cum){
-  const data=(mdls&&mdls.data)||[];
-  const used=cum&&cum.per_model||{};
-  const fctx=n=>!n?'&mdash;':n>=1000000?(n/1000000).toFixed(0)+'M':n>=1000?(n/1000).toFixed(0)+'k':n;
-  const tick=v=>v?'<span class="badge bg">&#10003;</span>':'<span class="badge bm">&mdash;</span>';
-  document.getElementById('models-body').innerHTML=data.length?data.map(m=>{
+let _activeFilter='all';
+let _sortCol=0,_sortDir=1;
+let _currentModels=[],_currentUsedMap={};
+function provOf(id){return id.startsWith('claude')?'Claude':id.startsWith('gpt')||id.startsWith('text-emb')||id.startsWith('o1')?'OpenAI':id.startsWith('gemini')?'Gemini':'Other';}
+function filterModels(family){
+  _activeFilter=family;
+  document.querySelectorAll('.mf-btn').forEach(b=>b.classList.toggle('active',b.dataset.f===family));
+  document.querySelectorAll('#models-body tr').forEach(r=>{r.style.display=(family==='all'||r.dataset.family===family)?'':'none';});
+}
+const TIER_ORDER={'Free':0,'Versatile':1,'Lightweight':2,'Premium':3,'Standard':4,'Legacy':5};
+// FREE models confirmed by empirical quota testing (0 credits consumed)
+const FREE_MODELS=new Set(['gpt-4o','gpt-4o-mini','gpt-4','gpt-4-0613','gpt-4-0125-preview','gpt-4-o-preview','gpt-3.5-turbo','gpt-3.5-turbo-0613','gpt-4o-2024-11-20','gpt-4o-2024-08-06','gpt-4.1','gpt-4.1-2025-04-14','gpt-41-copilot']);
+const HIDDEN_MODELS=new Set(['gpt-41-copilot']);
+const LIGHTWEIGHT_MODELS=new Set(['claude-haiku-4.5','gemini-3-flash-preview','gemini-3.5-flash','gpt-5-mini','gpt-5.4-mini']);
+const VERSATILE_MODELS=new Set(['claude-sonnet-4.5','claude-sonnet-4.6','gemini-2.5-pro','gemini-3.1-pro-preview','gpt-5.3-codex','gpt-5.4']);
+function tierLabel(m){
+  if(FREE_MODELS.has(m.id))return'Free';
+  if(!m.model_picker_enabled)return'Legacy';
+  if(LIGHTWEIGHT_MODELS.has(m.id))return'Lightweight';
+  if(VERSATILE_MODELS.has(m.id))return'Versatile';
+  const cat=m.model_picker_category||'';
+  if(cat==='powerful')return'Premium';if(cat==='versatile')return'Versatile';if(cat==='lightweight')return'Lightweight';
+  return'Standard';
+}
+function tierBadge(m){
+  if(FREE_MODELS.has(m.id))return'<span class="badge" style="background:#1f6feb;color:#cae8ff">Free</span>';
+  if(!m.model_picker_enabled)return'<span class="badge bm">Legacy</span>';
+  if(LIGHTWEIGHT_MODELS.has(m.id))return'<span class="badge" style="background:#b08800;color:#fff8c5">Lightweight</span>';
+  if(VERSATILE_MODELS.has(m.id))return'<span class="badge" style="background:#1a7f37;color:#aff5b4">Versatile</span>';
+  const cat=m.model_picker_category||'';
+  if(cat==='powerful')return'<span class="badge" style="background:#6e40c9;color:#e2c5fc">Premium</span>';
+  if(cat==='versatile')return'<span class="badge" style="background:#1a7f37;color:#aff5b4">Versatile</span>';
+  if(cat==='lightweight')return'<span class="badge" style="background:#b08800;color:#fff8c5">Lightweight</span>';
+  return'<span class="badge bm">Standard</span>';
+}
+const SNAPSHOT_PAT=/(-d{4}-d{2}-d{2}|-d{4}(-preview)?|-o-preview)$/;
+function isSnapshot(id){return SNAPSHOT_PAT.test(id);}
+function sortBy(col){
+  if(_sortCol===col)_sortDir*=-1;else{_sortCol=col;_sortDir=1;}
+  document.querySelectorAll('#models-thead th').forEach((th,i)=>{th.innerHTML=th.innerHTML.replace(/s*[\u2191\u2193\u2195]$/,'')+(i===_sortCol?(_sortDir===1?' \u2191':' \u2193'):' \u2195');});
+  renderModelsBody();
+}
+function renderModelsBody(){
+  const models=_currentModels,usedMap=_currentUsedMap;
+  const sorted=[...models].sort((a,b)=>{
+    const la=a.capabilities||{},lim_a=(la.limits)||{},su_a=(la.supports)||{};
+    const lb=b.capabilities||{},lim_b=(lb.limits)||{},su_b=(lb.supports)||{};
+    let va,vb;
+    switch(_sortCol){
+      case 0:va=a.id;vb=b.id;break;
+      case 1:va=TIER_ORDER[tierLabel(a)]??99;vb=TIER_ORDER[tierLabel(b)]??99;break;
+      case 2:va=la.family||'';vb=lb.family||'';break;
+      case 3:va=lim_a.max_context_window_tokens||0;vb=lim_b.max_context_window_tokens||0;break;
+      case 4:va=lim_a.max_output_tokens||0;vb=lim_b.max_output_tokens||0;break;
+      case 5:va=lim_a.vision?1:0;vb=lim_b.vision?1:0;break;
+      case 6:va=su_a.tool_calls?1:0;vb=su_b.tool_calls?1:0;break;
+      case 7:va=(su_a.adaptive_thinking||su_a.reasoning_effort)?1:0;vb=(su_b.adaptive_thinking||su_b.reasoning_effort)?1:0;break;
+      case 8:va=(usedMap[a.id]&&usedMap[a.id].requests)||0;vb=(usedMap[b.id]&&usedMap[b.id].requests)||0;break;
+      default:va=a.id;vb=b.id;
+    }
+    if(va<vb)return -1*_sortDir;if(va>vb)return 1*_sortDir;return a.id.localeCompare(b.id);
+  });
+  document.getElementById('models-body').innerHTML=sorted.map(m=>{
     const caps=m.capabilities||{},lim=caps.limits||{},sup=caps.supports||{};
-    return '<tr><td style="font-family:monospace;font-size:.77rem">'+m.id+'</td><td><span class="badge bm" style="font-size:.68rem">'+(caps.family||'&mdash;')+'</span></td><td>'+fctx(lim.max_context_window_tokens)+'</td><td>'+fctx(lim.max_output_tokens)+'</td><td>'+tick(sup.vision)+'</td><td>'+tick(sup.tool_calls)+'</td></tr>';
-  }).join(''):'<tr><td colspan="6" class="muted" style="text-align:center;padding:16px">No models returned.</td></tr>';
+    const prov=provOf(m.id);
+    const used=usedMap[m.id];
+    const usedCell=used?'<span class="badge bg">'+f(used.requests)+' req &middot; '+f(used.total_tokens)+' tok</span>':'<span class="muted" style="font-size:.75rem">not used</span>';
+    const thinking=sup.adaptive_thinking||sup.reasoning_effort;
+    const rowStyle=used?'background:rgba(63,185,80,.04)':'';
+    return '<tr data-family="'+prov+'" style="'+rowStyle+'">'
+      +'<td style="font-family:monospace;font-size:.77rem">'+m.id+'</td>'
+      +'<td>'+tierBadge(m)+'</td>'
+      +'<td><span class="badge bm" style="font-size:.68rem">'+caps.family+'</span></td>'
+      +'<td>'+fctx(lim.max_context_window_tokens)+'</td>'
+      +'<td>'+fctx(lim.max_output_tokens)+'</td>'
+      +'<td>'+tick(lim.vision)+'</td>'
+      +'<td>'+tick(sup.tool_calls)+'</td>'
+      +'<td>'+tick(thinking)+'</td>'
+      +'<td>'+usedCell+'</td>'
+      +'</tr>';
+  }).join('');
+  filterModels(_activeFilter);
+}
+function fctx(n){if(!n)return'&#8212;';if(n>=1000000)return(n/1000000).toFixed(0)+'M';if(n>=1000)return(n/1000).toFixed(0)+'k';return n;}
+function tick(v){return v?'<span class="badge bg">&#10003;</span>':'<span class="badge bm">&#8212;</span>';}
+function renderModels(mdls,cum){
+  const allModels=(mdls&&mdls.data)||[];
+  const models=allModels.filter(m=>!isSnapshot(m.id)&&!HIDDEN_MODELS.has(m.id)&&tierLabel(m)!=='Legacy');
+  const usedMap=cum&&cum.per_model||{};
+  if(!allModels.length){document.getElementById('models-body').innerHTML='<tr><td colspan="9" class="red" style="text-align:center;padding:16px">Failed to load models.</td></tr>';return;}
+  const families={};
+  models.forEach(m=>{const prov=provOf(m.id);if(!families[prov])families[prov]=0;families[prov]++;});
+  const provs=['all',...Object.keys(families).sort()];
+  document.getElementById('models-filters').innerHTML=provs.map(p=>'<button class="btn mf-btn'+(p===_activeFilter?' active':'')+'" data-f="'+p+'" onclick="filterModels(this.dataset.f)" style="font-size:.72rem;padding:3px 11px">'+(p==='all'?'All ('+models.length+')':p+' ('+families[p]+')')+'</button>').join('');
+  _currentModels=models;_currentUsedMap=usedMap;
+  renderModelsBody();
+  document.getElementById('models-ts').textContent=models.length+' models ('+(allModels.length-models.length)+' snapshots hidden)';
 }
 load();
 setInterval(load,15000);
