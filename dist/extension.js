@@ -1071,7 +1071,7 @@ function tierBadge(m){
   if(cat==='lightweight')return'<span class="badge" style="background:#b08800;color:#fff8c5">Lightweight</span>';
   return'<span class="badge bm">Standard</span>';
 }
-const SNAPSHOT_PAT=/(-d{4}-d{2}-d{2}|-d{4}(-preview)?|-o-preview)$/;
+const SNAPSHOT_PAT=/(-\\d{4}-\\d{2}-\\d{2}|-\\d{4}(-preview)?|-o-preview)$/;
 function isSnapshot(id){return SNAPSHOT_PAT.test(id);}
 function sortBy(col){
   if(_sortCol===col)_sortDir*=-1;else{_sortCol=col;_sortDir=1;}
