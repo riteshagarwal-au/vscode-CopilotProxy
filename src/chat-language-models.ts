@@ -13,8 +13,11 @@ import * as vscode from 'vscode';
 import { getCopilotToken } from './copilot-auth';
 
 const ENTRY_NAME = 'CopilotProxy';
-const FREE_MODEL_IDS = new Set(['gpt-4', 'gpt-4.1', 'gpt-4o']);
-const EXCLUDED_MODEL_IDS = new Set(['gpt-4o-mini', 'gpt-3.5-turbo', 'gpt-4o-mini-2024-07-18', 'gpt-3.5-turbo-0613']);
+
+// GPT models are gated — only these specific IDs are allowed through (all are free tier).
+// All non-GPT models (Claude, Gemini, etc.) pass through automatically via model_picker_enabled.
+// Limits and capabilities come entirely from the Copilot API — nothing is hardcoded.
+const ALLOWED_FREE_MODEL_IDS = new Set(['gpt-4', 'gpt-4.1', 'gpt-4o']);
 
 interface ModelEntry {
   id: string;
@@ -42,36 +45,21 @@ function getChatLMPath(): string {
   return path.join(os.homedir(), '.config', 'Code', 'User', 'chatLanguageModels.json');
 }
 
-function modelName(id: string, displayName: string): string {
-  return FREE_MODEL_IDS.has(id) ? `${displayName} (Free)` : displayName;
+/** Strip date suffixes like -2024-11-20 or -0613 to get the base model id. */
+function baseId(id: string): string {
+  return id.replace(/-\d{4}-\d{2}-\d{2}$/, '').replace(/-\d{4}$/, '');
 }
 
-function buildFreeModels(proxyUrl: string): ModelEntry[] {
-  return [
-    { id: 'gpt-4',   name: 'GPT-4 (Free)',   url: proxyUrl, toolCalling: true, vision: false, maxInputTokens: 32768,  maxOutputTokens: 4096  },
-    { id: 'gpt-4.1', name: 'GPT-4.1 (Free)', url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 128000, maxOutputTokens: 16384 },
-    { id: 'gpt-4o',  name: 'GPT-4o (Free)',  url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 64000,  maxOutputTokens: 4096  },
-  ];
-}
-
-function buildFallbackModels(proxyUrl: string): ModelEntry[] {
-  return [
-    ...buildFreeModels(proxyUrl),
-    { id: 'claude-sonnet-4.6', name: 'Claude Sonnet 4.6 (via Copilot Proxy)', url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 200000, maxOutputTokens: 64000, reasoningEffort: 'low' },
-    { id: 'claude-haiku-4.5',  name: 'Claude Haiku 4.5 (via Copilot Proxy)',  url: proxyUrl, toolCalling: true, vision: false, maxInputTokens: 136000, maxOutputTokens: 64000, reasoningEffort: 'low' },
-    { id: 'claude-opus-4.6',   name: 'Claude Opus 4.6 (via Copilot Proxy)',   url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 200000, maxOutputTokens: 64000, reasoningEffort: 'low' },
-    { id: 'gemini-3.5-flash',  name: 'Gemini 3.5 Flash (via Copilot Proxy)',  url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 1000000, maxOutputTokens: 8096  },
-  ];
+function modelDisplayName(id: string, apiName: string): string {
+  const suffix = ALLOWED_FREE_MODEL_IDS.has(id) ? ' (Free)' : ' (via Copilot Proxy)';
+  return `${apiName}${suffix}`;
 }
 
 async function fetchModels(outputChannel: vscode.OutputChannel, proxyUrl: string): Promise<ModelEntry[]> {
   try {
     const { token, baseUrl } = await getCopilotToken();
-    const modelsUrl = (baseUrl.includes('enterprise') || baseUrl.includes('business'))
-      ? `${baseUrl}/models`
-      : `${baseUrl}/models`;
 
-    const resp = await fetch(modelsUrl, {
+    const resp = await fetch(`${baseUrl}/models`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Editor-Version': 'vscode/1.99.0',
@@ -82,8 +70,8 @@ async function fetchModels(outputChannel: vscode.OutputChannel, proxyUrl: string
     });
 
     if (!resp.ok) {
-      outputChannel.appendLine(`[cp:lm] Models API returned ${resp.status} — using fallback`);
-      return buildFallbackModels(proxyUrl);
+      outputChannel.appendLine(`[cp:lm] Models API returned ${resp.status} — skipping sync`);
+      return [];
     }
 
     const json = await resp.json() as { data?: Array<{
@@ -91,39 +79,44 @@ async function fetchModels(outputChannel: vscode.OutputChannel, proxyUrl: string
       name?: string;
       model_picker_enabled?: boolean;
       capabilities?: {
-        family?: string;
         limits?: { max_prompt_tokens?: number; max_output_tokens?: number };
         supports?: { tool_calls?: boolean; vision?: boolean };
       };
     }> };
 
-    const data = json.data ?? [];
-    const apiModels: ModelEntry[] = data
-      .filter(m => m.model_picker_enabled !== false && !m.id.includes('embedding') && !EXCLUDED_MODEL_IDS.has(m.id))
-      .map(m => {
-        const lim = m.capabilities?.limits ?? {};
-        const sup = m.capabilities?.supports ?? {};
-        const isReasoning = /o1|o3|thinking|claude|gemini/i.test(m.id);
-        const entry: ModelEntry = {
-          id: m.id,
-          name: modelName(m.id, `${m.name ?? m.id} (via Copilot Proxy)`),
-          url: proxyUrl,
-          toolCalling: sup.tool_calls ?? true,
-          vision: sup.vision ?? false,
-          maxInputTokens: lim.max_prompt_tokens ?? 128000,
-          maxOutputTokens: lim.max_output_tokens ?? 8096,
-        };
-        if (isReasoning) entry.reasoningEffort = 'low';
-        return entry;
-      });
+    const models: ModelEntry[] = [];
+    for (const m of json.data ?? []) {
+      // Skip embeddings
+      if (m.id.includes('embedding')) { continue; }
+      // GPT models: only allow explicitly listed IDs (base id match)
+      const isGpt = /^gpt-/i.test(m.id);
+      if (isGpt && !ALLOWED_FREE_MODEL_IDS.has(m.id) && !ALLOWED_FREE_MODEL_IDS.has(baseId(m.id))) { continue; }
+      // Non-GPT models: pass through if model_picker_enabled (default true)
+      if (!isGpt && m.model_picker_enabled === false) { continue; }
 
-    // Ensure free models always present
-    const returnedIds = new Set(apiModels.map(m => m.id));
-    const missingFree = buildFreeModels(proxyUrl).filter(m => !returnedIds.has(m.id));
-    return [...apiModels, ...missingFree];
+      const lim = m.capabilities?.limits ?? {};
+      const sup = m.capabilities?.supports ?? {};
+      const isReasoning = /o1|o3|thinking|claude|gemini/i.test(m.id);
+
+      const entry: ModelEntry = {
+        id: m.id,
+        name: modelDisplayName(m.id, m.name ?? m.id),
+        url: proxyUrl,
+        toolCalling: sup.tool_calls ?? true,
+        vision: sup.vision ?? false,
+        // All limits come directly from the API — no hardcoded values
+        maxInputTokens: lim.max_prompt_tokens ?? 128000,
+        maxOutputTokens: lim.max_output_tokens ?? 4096,
+      };
+      if (isReasoning) { entry.reasoningEffort = 'low'; }
+      models.push(entry);
+    }
+
+    outputChannel.appendLine(`[cp:lm] Fetched ${models.length} allowed models from API`);
+    return models;
   } catch (err) {
     outputChannel.appendLine(`[cp:lm] Could not fetch models: ${err}`);
-    return buildFallbackModels(proxyUrl);
+    return [];
   }
 }
 
@@ -140,7 +133,7 @@ export async function syncChatLanguageModels(outputChannel: vscode.OutputChannel
     }
 
     const models = await fetchModels(outputChannel, proxyUrl);
-    if (models.length === 0) { outputChannel.appendLine('[cp:lm] No models — skipping'); return; }
+    if (models.length === 0) { outputChannel.appendLine('[cp:lm] No models returned from API — skipping write to preserve existing config'); return; }
 
     const newEntry: LMEntry = {
       name: ENTRY_NAME,
