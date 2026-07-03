@@ -4,6 +4,17 @@
 
 A VS Code extension that runs an embedded HTTP proxy on port **4242**, intercepting all GitHub Copilot traffic through `github.copilot.advanced.debug.overrideProxyUrl`. No OAuth device flow — it reuses VS Code's built-in GitHub authentication session.
 
+## How to Use
+
+1. Install and reload VS Code — the proxy starts automatically on port 4242
+2. Open GitHub Copilot Chat (`Ctrl+Alt+I` / `Cmd+Alt+I`)
+3. Click the **model selector** at the bottom of the chat input
+4. Choose any model — Claude, GPT-4o, Gemini, etc.
+5. All requests route through the proxy with full metrics tracking
+6. Open the **Dashboard** (`http://localhost:4242/dashboard`) to see usage, quotas, and the Available Models table
+
+---
+
 ## Features
 
 - **Transparent proxy** — routes `/v1/chat/completions`, `/v1/messages` (Anthropic), `/v1/embeddings`, `/v1/models`
@@ -104,6 +115,8 @@ sidebar.ts            → Activity bar Status + Metrics tree views
 types.ts              → Shared TypeScript interfaces
 ```
 
-## License
+---
 
-MIT
+## Resources
+
+- [MIT License](LICENSE)
