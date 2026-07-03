@@ -1347,9 +1347,6 @@ function getChatLMPath() {
     return path2.join(process.env.APPDATA ?? os.homedir(), "Code", "User", "chatLanguageModels.json");
   return path2.join(os.homedir(), ".config", "Code", "User", "chatLanguageModels.json");
 }
-function baseId(id) {
-  return id.replace(/-\d{4}-\d{2}-\d{2}$/, "").replace(/-\d{4}$/, "");
-}
 function modelDisplayName(id, apiName) {
   const suffix = ALLOWED_FREE_MODEL_IDS.has(id) ? " (Free)" : " (via Copilot Proxy)";
   return `${apiName}${suffix}`;
@@ -1377,7 +1374,7 @@ async function fetchModels(outputChannel2, proxyUrl) {
         continue;
       }
       const isGpt = /^gpt-/i.test(m.id);
-      if (isGpt && !ALLOWED_FREE_MODEL_IDS.has(m.id) && !ALLOWED_FREE_MODEL_IDS.has(baseId(m.id))) {
+      if (isGpt && !ALLOWED_FREE_MODEL_IDS.has(m.id)) {
         continue;
       }
       if (!isGpt && m.model_picker_enabled === false) {

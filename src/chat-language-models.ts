@@ -45,11 +45,6 @@ function getChatLMPath(): string {
   return path.join(os.homedir(), '.config', 'Code', 'User', 'chatLanguageModels.json');
 }
 
-/** Strip date suffixes like -2024-11-20 or -0613 to get the base model id. */
-function baseId(id: string): string {
-  return id.replace(/-\d{4}-\d{2}-\d{2}$/, '').replace(/-\d{4}$/, '');
-}
-
 function modelDisplayName(id: string, apiName: string): string {
   const suffix = ALLOWED_FREE_MODEL_IDS.has(id) ? ' (Free)' : ' (via Copilot Proxy)';
   return `${apiName}${suffix}`;
@@ -88,9 +83,9 @@ async function fetchModels(outputChannel: vscode.OutputChannel, proxyUrl: string
     for (const m of json.data ?? []) {
       // Skip embeddings
       if (m.id.includes('embedding')) { continue; }
-      // GPT models: only allow explicitly listed IDs (base id match)
+      // GPT models: only allow exact ID matches — snapshots (e.g. gpt-4.1-2025-04-14) are excluded
       const isGpt = /^gpt-/i.test(m.id);
-      if (isGpt && !ALLOWED_FREE_MODEL_IDS.has(m.id) && !ALLOWED_FREE_MODEL_IDS.has(baseId(m.id))) { continue; }
+      if (isGpt && !ALLOWED_FREE_MODEL_IDS.has(m.id)) { continue; }
       // Non-GPT models: pass through if model_picker_enabled (default true)
       if (!isGpt && m.model_picker_enabled === false) { continue; }
 
