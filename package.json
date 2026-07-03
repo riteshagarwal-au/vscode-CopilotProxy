@@ -8,6 +8,10 @@
     "name": "Ritesh Agarwal",
     "url": "https://buymeacoffee.com/riteshagarwal"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/riteshagarwal/AI-Study.git"
+  },
   "license": "MIT",
   "engines": {
     "vscode": "^1.95.0"
