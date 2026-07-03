@@ -2,7 +2,7 @@
   "name": "github-copilot-proxy",
   "displayName": "GitHub Copilot Proxy",
   "description": "Embedded GitHub Copilot reverse proxy — OpenAI & Anthropic compatible, zero Docker, uses your VS Code GitHub session.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "riteshagarwal",
   "author": {
     "name": "Ritesh Agarwal",
