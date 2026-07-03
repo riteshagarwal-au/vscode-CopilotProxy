@@ -83,11 +83,11 @@ async function fetchModels(outputChannel: vscode.OutputChannel, proxyUrl: string
     for (const m of json.data ?? []) {
       // Skip embeddings
       if (m.id.includes('embedding')) { continue; }
-      // GPT models: only allow exact ID matches — snapshots (e.g. gpt-4.1-2025-04-14) are excluded
-      const isGpt = /^gpt-/i.test(m.id);
-      if (isGpt && !ALLOWED_FREE_MODEL_IDS.has(m.id)) { continue; }
-      // Non-GPT models: pass through if model_picker_enabled (default true)
-      if (!isGpt && m.model_picker_enabled === false) { continue; }
+      // GPT-4 family: only allow exact IDs — snapshots and mini variants are excluded
+      const isGpt4Family = /^gpt-4/i.test(m.id);
+      if (isGpt4Family && !ALLOWED_FREE_MODEL_IDS.has(m.id)) { continue; }
+      // All other models (GPT-5, Claude, Gemini, etc.): pass through if model_picker_enabled
+      if (!isGpt4Family && m.model_picker_enabled === false) { continue; }
 
       const lim = m.capabilities?.limits ?? {};
       const sup = m.capabilities?.supports ?? {};

@@ -1373,11 +1373,11 @@ async function fetchModels(outputChannel2, proxyUrl) {
       if (m.id.includes("embedding")) {
         continue;
       }
-      const isGpt = /^gpt-/i.test(m.id);
-      if (isGpt && !ALLOWED_FREE_MODEL_IDS.has(m.id)) {
+      const isGpt4Family = /^gpt-4/i.test(m.id);
+      if (isGpt4Family && !ALLOWED_FREE_MODEL_IDS.has(m.id)) {
         continue;
       }
-      if (!isGpt && m.model_picker_enabled === false) {
+      if (!isGpt4Family && m.model_picker_enabled === false) {
         continue;
       }
       const lim = m.capabilities?.limits ?? {};
