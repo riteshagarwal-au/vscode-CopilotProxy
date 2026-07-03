@@ -19,6 +19,7 @@ A VS Code extension that runs an embedded HTTP proxy on port **4242**, intercept
 
 - **Transparent proxy** — routes `/v1/chat/completions`, `/v1/messages` (Anthropic), `/v1/embeddings`, `/v1/models`
 - **Anthropic ↔ OpenAI translation** — automatically converts Claude-format requests to OpenAI format and back
+- **Free Model Access** — exposes 3 free Copilot models with no deduction from premium context quota
 - **Usage dashboard** — live metrics, quotas, model usage tabs, available models table with tier/filter
 - **Message inspector** — side-by-side input/output viewer for every request
 - **Activity bar sidebar** — Status and Metrics tree views with clickable links
