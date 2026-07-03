@@ -1338,7 +1338,8 @@ var os = __toESM(require("os"));
 var path2 = __toESM(require("path"));
 var vscode4 = __toESM(require("vscode"));
 var ENTRY_NAME = "CopilotProxy";
-var FREE_MODEL_IDS = /* @__PURE__ */ new Set(["gpt-3.5-turbo", "gpt-4", "gpt-4.1", "gpt-4o", "gpt-4o-mini"]);
+var FREE_MODEL_IDS = /* @__PURE__ */ new Set(["gpt-4", "gpt-4.1", "gpt-4o"]);
+var EXCLUDED_MODEL_IDS = /* @__PURE__ */ new Set(["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4o-mini-2024-07-18", "gpt-3.5-turbo-0613"]);
 function getChatLMPath() {
   const p = process.platform;
   if (p === "darwin")
@@ -1352,11 +1353,9 @@ function modelName(id, displayName) {
 }
 function buildFreeModels(proxyUrl) {
   return [
-    { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo (Free)", url: proxyUrl, toolCalling: true, vision: false, maxInputTokens: 16385, maxOutputTokens: 4096 },
-    { id: "gpt-4", name: "GPT-4 (Free)", url: proxyUrl, toolCalling: true, vision: false, maxInputTokens: 8192, maxOutputTokens: 4096 },
-    { id: "gpt-4.1", name: "GPT-4.1 (Free)", url: proxyUrl, toolCalling: true, vision: true, maxInputTokens: 128e3, maxOutputTokens: 8096 },
-    { id: "gpt-4o", name: "GPT-4o (Free)", url: proxyUrl, toolCalling: true, vision: true, maxInputTokens: 128e3, maxOutputTokens: 8096 },
-    { id: "gpt-4o-mini", name: "GPT-4o mini (Free)", url: proxyUrl, toolCalling: true, vision: true, maxInputTokens: 128e3, maxOutputTokens: 8096 }
+    { id: "gpt-4", name: "GPT-4 (Free)", url: proxyUrl, toolCalling: true, vision: false, maxInputTokens: 32768, maxOutputTokens: 4096 },
+    { id: "gpt-4.1", name: "GPT-4.1 (Free)", url: proxyUrl, toolCalling: true, vision: true, maxInputTokens: 128e3, maxOutputTokens: 16384 },
+    { id: "gpt-4o", name: "GPT-4o (Free)", url: proxyUrl, toolCalling: true, vision: true, maxInputTokens: 64e3, maxOutputTokens: 4096 }
   ];
 }
 function buildFallbackModels(proxyUrl) {
@@ -1387,7 +1386,7 @@ async function fetchModels(outputChannel2, proxyUrl) {
     }
     const json2 = await resp.json();
     const data = json2.data ?? [];
-    const apiModels = data.filter((m) => m.model_picker_enabled !== false && !m.id.includes("embedding")).map((m) => {
+    const apiModels = data.filter((m) => m.model_picker_enabled !== false && !m.id.includes("embedding") && !EXCLUDED_MODEL_IDS.has(m.id)).map((m) => {
       const lim = m.capabilities?.limits ?? {};
       const sup = m.capabilities?.supports ?? {};
       const isReasoning = /o1|o3|thinking|claude|gemini/i.test(m.id);

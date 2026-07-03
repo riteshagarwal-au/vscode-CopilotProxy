@@ -13,7 +13,8 @@ import * as vscode from 'vscode';
 import { getCopilotToken } from './copilot-auth';
 
 const ENTRY_NAME = 'CopilotProxy';
-const FREE_MODEL_IDS = new Set(['gpt-3.5-turbo', 'gpt-4', 'gpt-4.1', 'gpt-4o', 'gpt-4o-mini']);
+const FREE_MODEL_IDS = new Set(['gpt-4', 'gpt-4.1', 'gpt-4o']);
+const EXCLUDED_MODEL_IDS = new Set(['gpt-4o-mini', 'gpt-3.5-turbo', 'gpt-4o-mini-2024-07-18', 'gpt-3.5-turbo-0613']);
 
 interface ModelEntry {
   id: string;
@@ -47,11 +48,9 @@ function modelName(id: string, displayName: string): string {
 
 function buildFreeModels(proxyUrl: string): ModelEntry[] {
   return [
-    { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (Free)', url: proxyUrl, toolCalling: true, vision: false, maxInputTokens: 16385,  maxOutputTokens: 4096  },
-    { id: 'gpt-4',         name: 'GPT-4 (Free)',          url: proxyUrl, toolCalling: true, vision: false, maxInputTokens: 8192,   maxOutputTokens: 4096  },
-    { id: 'gpt-4.1',       name: 'GPT-4.1 (Free)',        url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 128000, maxOutputTokens: 8096  },
-    { id: 'gpt-4o',        name: 'GPT-4o (Free)',         url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 128000, maxOutputTokens: 8096  },
-    { id: 'gpt-4o-mini',   name: 'GPT-4o mini (Free)',    url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 128000, maxOutputTokens: 8096  },
+    { id: 'gpt-4',   name: 'GPT-4 (Free)',   url: proxyUrl, toolCalling: true, vision: false, maxInputTokens: 32768,  maxOutputTokens: 4096  },
+    { id: 'gpt-4.1', name: 'GPT-4.1 (Free)', url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 128000, maxOutputTokens: 16384 },
+    { id: 'gpt-4o',  name: 'GPT-4o (Free)',  url: proxyUrl, toolCalling: true, vision: true,  maxInputTokens: 64000,  maxOutputTokens: 4096  },
   ];
 }
 
@@ -100,7 +99,7 @@ async function fetchModels(outputChannel: vscode.OutputChannel, proxyUrl: string
 
     const data = json.data ?? [];
     const apiModels: ModelEntry[] = data
-      .filter(m => m.model_picker_enabled !== false && !m.id.includes('embedding'))
+      .filter(m => m.model_picker_enabled !== false && !m.id.includes('embedding') && !EXCLUDED_MODEL_IDS.has(m.id))
       .map(m => {
         const lim = m.capabilities?.limits ?? {};
         const sup = m.capabilities?.supports ?? {};
